@@ -196,8 +196,55 @@ gzip ${vcfbub_input_dir}/${sample}.snarls.vcf
 ~/vcfbub -l 0 -a 100000 -i ${vcfbub_input_dir}/${sample}.snarls.vcf.gz > ${vcfbub_out_dir}/${sample}.vcfbub.snarls.vcf
 ```
 
-
 ## Merge vcfs, clean, etc. 
+
+Create a file that has the paths to all the vcf files
+
+```bash 
+nano vcf_fofn.txt
+
+# looks like this, etc. 
+/n/holyscratch01/edwards_lab/Users/kelsielopez/pggb/vcfwave/scaffold_1.vcfwave.vcfbub.snarls.vcf
+/n/holyscratch01/edwards_lab/Users/kelsielopez/pggb/vcfwave/scaffold_2.vcfwave.vcfbub.snarls.vcf
+/n/holyscratch01/edwards_lab/Users/kelsielopez/pggb/vcfwave/scaffold_3.vcfwave.vcfbub.snarls.vcf
+/n/holyscratch01/edwards_lab/Users/kelsielopez/pggb/vcfwave/scaffold_4.vcfwave.vcfbub.snarls.vcf
+/n/holyscratch01/edwards_lab/Users/kelsielopez/pggb/vcfwave/scaffold_6.vcfwave.vcfbub.snarls.vcf
+/n/holyscratch01/edwards_lab/Users/kelsielopez/pggb/vcfwave/scaffold_7.vcfwave.vcfbub.snarls.vcf
+/n/holyscratch01/edwards_lab/Users/kelsielopez/pggb/vcfwave/scaffold_8.vcfwave.vcfbub.snarls.vcf
+/n/holyscratch01/edwards_lab/Users/kelsielopez/pggb/vcfwave/scaffold_9.vcfwave.vcfbub.snarls.vcf
+```
+
+Combining and cleaning steps:
+
+```bash
+# I'm going back to python environment because this is how i downloaded most of the programs 
+source activate python_env1
+
+# 1. Concatenate vcf files 
+bcftools concat -O z -o pggb_merged.vcf.gz -f vcf_fofn.txt
+
+#2. Fix ploidy 
+bcftools +fixploidy pggb_merged.vcf.gz > pggb_merged.fixploidy.vcf
+
+#3. 
+bcftools +fill-tags pggb_merged.fixploidy.vcf -Ob -o pggb_merged_cleanup.bcf -- -t AN,AC,AF
+
+#4.
+PATH_REFERENCE_FA="/n/holyscratch01/edwards_lab/Users/kelsielopez/hap_assemblies/prefixed/HemMar_prefixed_scaffolds_corrected.fa"
+
+bcftools norm -m+both -f ${PATH_REFERENCE_FA} pggb_merged_cleanup.test.bcf > pggb_merged_normalized.test.vcf
+
+#5. Add tags for allele number, allele count, allele proportion (?) and missing proportion 
+bcftools sort pggb_merged_normalized.test.vcf | bcftools +fill-tags -- -t AN,AC,AF,F_MISSING | bcftools view -o pggb_cleaned_final.test.vcf.gz -Oz
+
+#6. Make a vcf of biallelic SNPs
+bcftools view -m2 -M2 -v snps -o pggb_cleaned_final_biallelic_snp.tests.vcf.gz -Oz pggb_cleaned_final.test.vcf.gz 
+
+#7. Make a vcf of biallelic indels 
+bcftools view -m2 -M2 -v indels -o pggb_cleaned_final_biallelic_indels.tests.vcf.gz -Oz pggb_cleaned_final.test.vcf.gz 
+```
+
+
 
 ## Compute variant table
 
