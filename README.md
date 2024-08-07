@@ -244,10 +244,9 @@ bcftools view -m2 -M2 -v snps -o pggb_cleaned_final_biallelic_snp.tests.vcf.gz -
 bcftools view -m2 -M2 -v indels -o pggb_cleaned_final_biallelic_indels.tests.vcf.gz -Oz pggb_cleaned_final.test.vcf.gz 
 ```
 
-## Compute variant table
+## 5. Compute variant table
 
 ```bash
-
 # 1
 bcftools view -s VEFL_149044 -Oz -o pggb_cleaned_outgrouponly.vcf.gz pggb_cleaned_final.vcf.gz
 
@@ -281,6 +280,14 @@ bcftools query -f "%CHROM\t%POS0\t%END\t%TYPE\t%REF\t%ALT\t%INFO/AA\t%INV[\t%GT]
 python3 compute_var_table_no_regions_no_repeats.py
 ```
 
-Without repeat information or genomic overlaps:
-
 With repeat information and genomic overlaps:
+
+```bash
+bcftools view -Ou -a -s ^VEFL_149044 pggb_recode_aa.vcf.gz | bcftools annotate -Ou -x INFO/AF,INFO/F_MISSING | bcftools view -c 1 -Ou | bcftools annotate -a /n/holyscratch01/edwards_lab/Users/kelsielopez/agat/all_regions_blocks_tab.bed -h gr_header.txt -c CHROM,FROM,TO,GR --merge-logic GR:unique -Oz -o pggb_ingroup_only.vcf.gz
+bcftools query -f "%CHROM\t%POS0\t%END\t%TYPE\t%INFO/GR\t%REF\t%ALT\t%INFO/AA\t%INV[\t%GT]\n" pggb_ingroup_only.vcf > fixed_pggb_variation.tab
+cut -f1,2,3 fixed_pggb_variation.tab | bedtools intersect -a - -b /n/holyscratch01/edwards_lab/Users/kelsielopez/repeats/rep_masker/02_custom_lib/HemMar_prefixed_scaffolds_corrected.repeats.bed -loj | cut -f 1,2,3,7 > pggb_variation_repeat_overlaps.tab
+cut -f1,2,3 fixed_pggb_variation.tab | bedtools intersect -a - -b /n/holyscratch01/edwards_lab/Users/kelsielopez/agat/all_regions_blocks_tab.bed -loj | cut -f 1,2,3,7 > fixed_pggb_variation_genomic_overlaps.tab
+
+# going to be overwriting everything
+python3 compute_var_table_overlaps_fixed.py
+```
