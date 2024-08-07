@@ -12,7 +12,7 @@ module load python/3.10.9-fasrc01
 conda activate env_nf
 ```
 
-First we need to partition sequences into communities. I followed [this](https://gtpb.github.io/CPANG22/pages/Day2a_Homo_sapiens_pangenome_graphs) tutorial first to partition my sequences. 
+## 1. First we need to partition sequences into communities. I followed [this](https://gtpb.github.io/CPANG22/pages/Day2a_Homo_sapiens_pangenome_graphs) tutorial first to partition my sequences. 
 
 Partition contigs by chromosome by mapping each assembly against the scaffolded references:
 ```bash
@@ -72,24 +72,21 @@ done > rescues.paf
 ```
 Subset by chromosome, including the references
 ```bash
-
-PATH_SAMPLE_FA_GZ="/n/holyscratch01/edwards_lab/Users/kelsielopez/hap_assemblies/prefixed"
-
 cd ${PATH_SAMPLE_FA_GZ}
 
 DIR_PARTITIONING="/n/holyscratch01/edwards_lab/Users/kelsielopez/pggb/partitioning"
 
 mkdir -p parts
 
-( seq 35 ) | while read i; do
+( seq 34 ) | while read i; do
   awk '$6 ~ "scaffold_'$i'$"' $(ls $DIR_PARTITIONING/*.vs.ref.paf | \
     grep -v unaligned | sort; echo $DIR_PARTITIONING/rescues.paf) | cut -f 1 | sort | uniq \
     > parts/scaffold_$i.contigs;
 done
 
-( seq 35 ) | while read i; do
+( seq 34 ) | while read i; do
   echo scaffold_$i
-  samtools faidx HemMar_prefixed_scaffolds_final.fa.gz HemMar#1#scaffold_$i > parts/scaffold_$i.pan.fa
+  samtools faidx HemMar_prefixed_scaffolds_corrected.fa.gz HemMar#1#scaffold_$i > parts/scaffold_$i.pan.fa
 
   ls *.p_ctg.fa.gz | while read FASTA; do
     NAME=$(basename $FASTA *.p_ctg.fa.gz);
@@ -102,7 +99,7 @@ done
 done
 ```
 
-Now run pggb using nf-core
+## 2. Run pggb using nf-core
 
 ```bash
 conda activate env_nf
@@ -121,3 +118,11 @@ ls $in_dir/*.pan.fa.gz | while read FASTA; do
   cd ../
   done
 ```
+
+## 3. Merge vcfs, clean, etc. 
+
+## 4. Compute variant table
+
+Without repeat information or genomic overlaps:
+
+With repeat information and genomic overlaps:
