@@ -5,7 +5,7 @@ Resources:
 - [pggb nextflow](https://nf-co.re/pangenome/1.0.0/)
 
 ### Run pggb using nextflow nf-core
-I could not get `pggb` to work when I downloaded it using conda, singluarity, manually, etc. Nextflow was the only thing to get the graph building step to work for me. I must have some conflict with some dependencies. However, pggb downloaded with conda worked for the initial partitioning steps, but the graph building steps (wfmash, seqwish, smoothxg, and gfaffix) did not work for me unless I used nf-core.
+I could not get `pggb` to work when I downloaded it using conda, singluarity, manually, etc. Nextflow was the only thing to get the graph building step to work for me. I must have some conflict with some dependencies. However, pggb downloaded with conda worked for the initial partitioning steps, but the graph building steps (`wfmash`, `seqwish`, `smoothxg`, and `gfaffix`) did not work for me unless I used nf-core.
 ```bash
 # Install with conda
 module load python/3.10.9-fasrc01
@@ -123,7 +123,7 @@ done
 done
 ```
 
-## 2. Run pggb using nf-core
+## 2. Run `pggb` using nf-core
 
 ```bash
 
@@ -147,7 +147,7 @@ ls $in_dir/*.pan.fa.gz | while read FASTA; do
 
 ## 3. Deconstruct graphs into vcf files for each chromosome and remove large variants 
 
-Download vg deconstruct:
+Download `vg deconstruct`:
 
 NEED to run 1.40.0. I had problems down the line when I ran vcf wave when I was using different versions of vg. 
 
@@ -166,7 +166,7 @@ chmod +x vg
 export PATH=/n/home03/kelsielopez/vg:$PATH
 ```
 
-Download vcfbub:
+Download `vcfbub`:
 
 vcfbub v0.1.0
 https://github.com/pangenome/vcfbub
@@ -176,7 +176,7 @@ https://github.com/pangenome/vcfbub
 chmod u+x vcfbub
 ```
 
-Run vg deconstruct then vcf bub for each chromosome 
+Run `vg deconstruct` then `vcfbub` for each chromosome 
 
 ```bash
 # change according to which samples are done so far... I just started this process while the rest of the pangenome graphs were building because that can take a long time, especially for larger chromosomes.
@@ -202,7 +202,7 @@ gzip ${vcfbub_input_dir}/${sample}.snarls.vcf
 
 ## 4. Merge vcfs, clean, fix vcfs, etc. 
 
-Create a file that has the paths to all the vcf files
+Create a `vcf_fofn.txt` file that has the paths to all the vcf files
 
 ```bash 
 nano vcf_fofn.txt
