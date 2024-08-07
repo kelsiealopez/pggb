@@ -5,7 +5,7 @@ Resources:
 - [pggb nextflow](https://nf-co.re/pangenome/1.0.0/)
 
 ### Run pggb using nextflow nf-core
-I could not get pggb to work when I downloaded it using conda, singluarity, manually, etc. Nextflow was the only thing to get the graph building step to work for me. I must have some conflict with some dependencies. However, pggb downloaded with conda worked for the initial partitioning steps, but the graph building steps (wfmash, seqwish, smoothxg, and gfaffix) did not work for me unless I used nf-core.
+I could not get `pggb` to work when I downloaded it using conda, singluarity, manually, etc. Nextflow was the only thing to get the graph building step to work for me. I must have some conflict with some dependencies. However, pggb downloaded with conda worked for the initial partitioning steps, but the graph building steps (wfmash, seqwish, smoothxg, and gfaffix) did not work for me unless I used nf-core.
 ```bash
 # Install with conda
 module load python/3.10.9-fasrc01
