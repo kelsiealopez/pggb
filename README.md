@@ -12,7 +12,9 @@ module load python/3.10.9-fasrc01
 conda activate env_nf
 ```
 
-## 1. First we need to partition sequences into communities. I followed [this](https://gtpb.github.io/CPANG22/pages/Day2a_Homo_sapiens_pangenome_graphs) tutorial first to partition my sequences. 
+## 1. First we need to partition sequences into communities. 
+
+I followed [this](https://gtpb.github.io/CPANG22/pages/Day2a_Homo_sapiens_pangenome_graphs) tutorial first to partition my sequences. 
 
 Partition contigs by chromosome by mapping each assembly against the scaffolded references:
 ```bash
