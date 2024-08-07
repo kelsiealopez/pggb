@@ -9,6 +9,7 @@ I could not get pggb to work when I downloaded it using conda, singluarity, manu
 ```bash
 # Install with conda
 module load python/3.10.9-fasrc01
+conda create --name env_nf nextflow
 conda activate env_nf
 ```
 
