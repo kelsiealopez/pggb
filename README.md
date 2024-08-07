@@ -103,5 +103,24 @@ done
 
   bgzip -@ 8 parts/scaffold_$i.pan.fa && samtools faidx parts/scaffold_$i.pan.fa.gz
 done
+```
 
-``
+Now run pggb using nf-core
+
+```bash
+conda activate env_nf
+
+in_dir="/n/holyscratch01/edwards_lab/Users/kelsielopez/hap_assemblies/prefixed/parts"
+outdir="/n/holyscratch01/edwards_lab/Users/kelsielopez/pggb"
+
+cd /n/holyscratch01/edwards_lab/Users/kelsielopez/pggb
+
+ls $in_dir/*.pan.fa.gz | while read FASTA; do
+  NAME=${FASTA%.pan.fa.gz};
+  echo $NAME
+  mkdir $NAME
+  cd $NAME
+    nextflow run nf-core/pangenome -r dev --input $FASTA --n_haplotypes 12 --wfmash_map_pct_id 85 --seqwish_min_match_length 79 --outdir $NAME -profile singularity
+  cd ../
+  done
+```
