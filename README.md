@@ -145,7 +145,7 @@ ls $in_dir/*.pan.fa.gz | while read FASTA; do
   done
 ```
 
-## Deconstruct graphs into vcf files for each chromosome and remove large variants 
+## 3. Deconstruct graphs into vcf files for each chromosome and remove large variants 
 
 Download vg deconstruct:
 
@@ -196,7 +196,7 @@ gzip ${vcfbub_input_dir}/${sample}.snarls.vcf
 ~/vcfbub -l 0 -a 100000 -i ${vcfbub_input_dir}/${sample}.snarls.vcf.gz > ${vcfbub_out_dir}/${sample}.vcfbub.snarls.vcf
 ```
 
-## Merge vcfs, clean, etc. 
+## 4. Merge vcfs, clean, fix vcfs, etc. 
 
 Create a file that has the paths to all the vcf files
 
@@ -217,7 +217,7 @@ nano vcf_fofn.txt
 Combining and cleaning steps:
 
 ```bash
-# I'm going back to python environment because this is how i downloaded most of the programs 
+# I'm going back to python environment because this is how I downloaded most of the programs 
 source activate python_env1
 
 # 1. Concatenate vcf files 
@@ -244,9 +244,42 @@ bcftools view -m2 -M2 -v snps -o pggb_cleaned_final_biallelic_snp.tests.vcf.gz -
 bcftools view -m2 -M2 -v indels -o pggb_cleaned_final_biallelic_indels.tests.vcf.gz -Oz pggb_cleaned_final.test.vcf.gz 
 ```
 
-
-
 ## Compute variant table
+
+```bash
+
+# 1
+bcftools view -s VEFL_149044 -Oz -o pggb_cleaned_outgrouponly.vcf.gz pggb_cleaned_final.vcf.gz
+
+
+# 2
+bcftools query -f '%CHROM\t%POS\t%REF\t%ALT[\t%GT]\n' pggb_cleaned_outgrouponly.vcf.gz > aa.tab
+
+# 3 
+
+python3 calc_anc_allele.py
+
+# 4 
+bgzip aa.processed.tab 
+
+#5 
+tabix -s1 -b2 -e2 aa.processed.tab.gz
+
+#6 
+echo '##INFO=<ID=AA,Number=1,Type=Character,Description="Ancestral allele">' > hdr.txt
+
+#7 
+bcftools annotate -x INFO/CONFLICT,INFO/LV,INFO/PS,INFO/AT,INFO/TYPE,INFO/LEN,INFO/ORIGIN,INFO/NS pggb_cleaned_final.vcf.gz | bcftools annotate -a aa.processed.tab.gz -c CHROM,POS,REF,ALT,.INFO/AA -h hdr.txt -Oz -o pggb_recode_aa.vcf.gz
+
+#8
+bcftools view -Ou -a -s ^VEFL_149044 pggb_recode_aa.vcf.gz | bcftools annotate -Ou -x INFO/AF,INFO/F_MISSING | bcftools view -c 1 -Ou -Oz -o pggb_ingroup_only.vcf.gz
+
+#9
+bcftools query -f "%CHROM\t%POS0\t%END\t%TYPE\t%REF\t%ALT\t%INFO/AA\t%INV[\t%GT]\n" pggb_ingroup_only.vcf.gz > pggb_variation.tab
+
+# call variants
+python3 compute_var_table_no_regions_no_repeats.py
+```
 
 Without repeat information or genomic overlaps:
 
