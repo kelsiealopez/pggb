@@ -149,7 +149,7 @@ ls $in_dir/*.pan.fa.gz | while read FASTA; do
 
 Download vg deconstruct:
 
-# NEED to run 1.40.0. I had problems down the line when I ran vcf wave when I was using different versions of vg. 
+NEED to run 1.40.0. I had problems down the line when I ran vcf wave when I was using different versions of vg. 
 https://github.com/vgteam/vg
 Download 1.40.0 from github! https://github.com/vgteam/vg/releases?page=2
 ```bash
