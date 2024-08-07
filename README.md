@@ -125,6 +125,8 @@ done
 ## 2. Run pggb using nf-core
 
 ```bash
+
+# make sure you are in the nextflow environment and not normal working python environment
 conda activate env_nf
 
 in_dir="/n/holyscratch01/edwards_lab/Users/kelsielopez/hap_assemblies/prefixed/parts"
