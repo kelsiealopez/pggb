@@ -246,6 +246,8 @@ bcftools view -m2 -M2 -v indels -o pggb_cleaned_final_biallelic_indels.tests.vcf
 
 ## 5. Compute variant table
 
+Without repeat information and genomic overlaps:
+
 ```bash
 # 1.
 bcftools view -s VEFL_149044 -Oz -o pggb_cleaned_outgrouponly.vcf.gz pggb_cleaned_final.vcf.gz
