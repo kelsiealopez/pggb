@@ -18,11 +18,14 @@ I followed [this](https://gtpb.github.io/CPANG22/pages/Day2a_Homo_sapiens_pangen
 
 Partition contigs by chromosome by mapping each assembly against the scaffolded references:
 ```bash
+
+PGGB_dir="/n/holyscratch01/edwards_lab/Users/kelsielopez/pggb"
+PATH_SAMPLE_FA_GZ="/n/holyscratch01/edwards_lab/Users/kelsielopez/hap_assemblies/prefixed"
+
 # Using -s 5k -p 85 -N -m -t 8
 # i used -p 85 because my outgroup is 14% divergent from Hemitriccus
 
-PATH_REFERENCE_FA_GZ="/n/holyscratch01/edwards_lab/Users/kelsielopez/hap_assemblies/prefixed/HemMar_prefixed_scaffolds_final.fa.gz"
-PATH_SAMPLE_FA_GZ="/n/holyscratch01/edwards_lab/Users/kelsielopez/hap_assemblies/prefixed"
+PATH_REFERENCE_FA_GZ="/n/holyscratch01/edwards_lab/Users/kelsielopez/hap_assemblies/prefixed/HemMar_prefixed_scaffolds_corrected.fa.gz"
 
 mkdir -p /n/holyscratch01/edwards_lab/Users/kelsielopez/pggb/partitioning
 
@@ -38,10 +41,6 @@ done
 ```
 Collect unmapped contigs and remap them in split mode:
 ```bash
-# Using -s 5k -p 85 -N -m -t 8
-PATH_REFERENCE_FA_GZ="/n/holyscratch01/edwards_lab/Users/kelsielopez/hap_assemblies/prefixed/HemMar_prefixed_scaffolds_final.fa.gz"
-PATH_SAMPLE_FA_GZ="/n/holyscratch01/edwards_lab/Users/kelsielopez/hap_assemblies/prefixed"
-
 cd ${PATH_SAMPLE_FA_GZ}
 
 ls *.p_ctg.fa.gz | while read FASTA; do
@@ -70,8 +69,8 @@ ls *.vs.ref.no_split.paf | while read PAF; do
   cat $PAF | awk -v OFS='\t' '{ print $1,$11,$0 }' | sort -n -r -k 1,2 | \
     awk -v OFS='\t' '$1 != last { print($3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15); last = $1; }'
 done > rescues.paf
-
 ```
+
 Subset by chromosome, including the references
 ```bash
 cd ${PATH_SAMPLE_FA_GZ}
