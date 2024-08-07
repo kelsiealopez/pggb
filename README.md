@@ -93,7 +93,7 @@ ls *.vs.ref.no_split.paf | while read PAF; do
 done > rescues.paf
 ```
 
-Subset by chromosome, including the references
+Subset by chromosome, including the references:
 
 ```bash
 cd ${PATH_SAMPLE_FA_GZ}
@@ -145,9 +145,61 @@ ls $in_dir/*.pan.fa.gz | while read FASTA; do
   done
 ```
 
-## 3. Merge vcfs, clean, etc. 
+## Deconstruct graphs into vcf files for each chromosome and remove large variants 
 
-## 4. Compute variant table
+Download vg deconstruct:
+
+# NEED to run 1.40.0. I had problems down the line when I ran vcf wave when I was using different versions of vg. 
+https://github.com/vgteam/vg
+Download 1.40.0 from github! https://github.com/vgteam/vg/releases?page=2
+```bash
+# Do NOT be in python env of nf_env
+conda deactivate
+
+chmod +x vg
+
+# Add to path  
+export PATH=/n/home03/kelsielopez/vg:$PATH
+```
+
+Download vcfbub:
+
+vcfbub v0.1.0
+https://github.com/pangenome/vcfbub
+
+```bash
+# make executable and add to path 
+chmod u+x vcfbub
+```
+
+Run vg deconstruct then vcf bub for each chromosome 
+
+```bash
+# change according to which samples are done so far... I just started this process while the rest of the pangenome graphs were building because that can take a long time, especially for larger chromosomes.
+
+samples=(scaffold_10 scaffold_11 scaffold_12 scaffold_13 scaffold_14 scaffold_15 scaffold_16 scaffold_17 scaffold_18 scaffold_19)
+
+for sample in "${samples[@]}"; 
+do
+
+vg_input_dir="/n/holyscratch01/edwards_lab/Users/kelsielopez/hap_assemblies/prefixed/parts/${sample}/FINAL_GFA"
+vg_out_dir="/n/holyscratch01/edwards_lab/Users/kelsielopez/pggb/deconstruct"
+
+~/vg deconstruct -H '#' ${vg_input_dir}/${sample}.pan.fa.gz.gfaffix.unchop.Ygs.view.gfa -e -a -P "HemMar" > ${vg_out_dir}/${sample}.snarls.vcf
+
+vcfbub_input_dir="/n/holyscratch01/edwards_lab/Users/kelsielopez/pggb/deconstruct"
+vcfbub_out_dir="/n/holyscratch01/edwards_lab/Users/kelsielopez/pggb/vcfbub"
+
+# vcf file needs to be gzipped  or else vcfbub doesn't work 
+gzip ${vcfbub_input_dir}/${sample}.snarls.vcf
+
+~/vcfbub -l 0 -a 100000 -i ${vcfbub_input_dir}/${sample}.snarls.vcf.gz > ${vcfbub_out_dir}/${sample}.vcfbub.snarls.vcf
+```
+
+
+## Merge vcfs, clean, etc. 
+
+## Compute variant table
 
 Without repeat information or genomic overlaps:
 
