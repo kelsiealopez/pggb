@@ -1,6 +1,6 @@
 ## Pangenome graph building with pggb 
 
-## Resources
+## Resources:
 - [Github page](https://github.com/pangenome/pggb)
 - [pggb nextflow](https://nf-co.re/pangenome/1.0.0/)
 
