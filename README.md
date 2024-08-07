@@ -1,7 +1,7 @@
 ## Pangenome graph building with pggb 
 
 ## Resources:
-- [Github page](https://github.com/pangenome/pggb)
+- [pggb Github page](https://github.com/pangenome/pggb)
 - [pggb nextflow](https://nf-co.re/pangenome/1.0.0/)
 
 ## Run pggb using nextflow nf-core
@@ -17,6 +17,7 @@ conda activate env_nf
 I followed [this](https://gtpb.github.io/CPANG22/pages/Day2a_Homo_sapiens_pangenome_graphs) tutorial first to partition my sequences. 
 
 Partition contigs by chromosome by mapping each assembly against the scaffolded references:
+
 ```bash
 
 PGGB_dir="/n/holyscratch01/edwards_lab/Users/kelsielopez/pggb"
@@ -39,7 +40,9 @@ ls *.p_ctg.fa.gz | while read FASTA; do
   wfmash $PATH_REFERENCE_FA_GZ ${PATH_SAMPLE_FA_GZ}/$FASTA -s 5k -p 85 -N -m -t 8 > $PATH_PAF
 done
 ```
+
 Collect unmapped contigs and remap them in split mode:
+
 ```bash
 cd ${PATH_SAMPLE_FA_GZ}
 
@@ -61,7 +64,9 @@ ls *.p_ctg.fa.gz | while read FASTA; do
   fi
 done
 ```
+
 Collect our best mapping for each of our attempted split rescues:
+
 ```bash
 cd /n/holyscratch01/edwards_lab/Users/kelsielopez/pggb/partitioning
 
@@ -72,6 +77,7 @@ done > rescues.paf
 ```
 
 Subset by chromosome, including the references
+
 ```bash
 cd ${PATH_SAMPLE_FA_GZ}
 
