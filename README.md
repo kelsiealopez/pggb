@@ -256,7 +256,6 @@ Without repeat information and genomic overlaps:
 # 1.
 bcftools view -s VEFL_149044 -Oz -o pggb_cleaned_outgrouponly.vcf.gz pggb_cleaned_final.vcf.gz
 
-
 # 2.
 bcftools query -f '%CHROM\t%POS\t%REF\t%ALT[\t%GT]\n' pggb_cleaned_outgrouponly.vcf.gz > aa.tab
 
