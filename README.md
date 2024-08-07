@@ -19,9 +19,25 @@ I followed [this](https://gtpb.github.io/CPANG22/pages/Day2a_Homo_sapiens_pangen
 Partition contigs by chromosome by mapping each assembly against the scaffolded references:
 
 ```bash
+source activate python_env1
 
 PGGB_dir="/n/holyscratch01/edwards_lab/Users/kelsielopez/pggb"
 PATH_SAMPLE_FA_GZ="/n/holyscratch01/edwards_lab/Users/kelsielopez/hap_assemblies/prefixed"
+
+# You will need to bgzip your input FASTA file before running the pipeline
+cd ${PATH_SAMPLE_FA_GZ}
+
+for file in *.p_ctg.fa;
+do
+bgzip -@ 4 $file
+done
+
+# Optionally, you can directly index the bgzipped FASTA file with
+
+for file in *.p_ctg.fa.gz;
+do
+samtools faidx $file
+done
 
 # Using -s 5k -p 85 -N -m -t 8
 # i used -p 85 because my outgroup is 14% divergent from Hemitriccus
