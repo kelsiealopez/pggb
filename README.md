@@ -223,60 +223,59 @@ source activate python_env1
 # 1. Concatenate vcf files 
 bcftools concat -O z -o pggb_merged.vcf.gz -f vcf_fofn.txt
 
-#2. Fix ploidy 
+# 2. Fix ploidy 
 bcftools +fixploidy pggb_merged.vcf.gz > pggb_merged.fixploidy.vcf
 
-#3. 
+# 3. 
 bcftools +fill-tags pggb_merged.fixploidy.vcf -Ob -o pggb_merged_cleanup.bcf -- -t AN,AC,AF
 
-#4.
+# 4.
 PATH_REFERENCE_FA="/n/holyscratch01/edwards_lab/Users/kelsielopez/hap_assemblies/prefixed/HemMar_prefixed_scaffolds_corrected.fa"
 
 bcftools norm -m+both -f ${PATH_REFERENCE_FA} pggb_merged_cleanup.test.bcf > pggb_merged_normalized.test.vcf
 
-#5. Add tags for allele number, allele count, allele proportion (?) and missing proportion 
+# 5. Add tags for allele number, allele count, allele proportion (?) and missing proportion 
 bcftools sort pggb_merged_normalized.test.vcf | bcftools +fill-tags -- -t AN,AC,AF,F_MISSING | bcftools view -o pggb_cleaned_final.test.vcf.gz -Oz
 
-#6. Make a vcf of biallelic SNPs
+# 6. Make a vcf of biallelic SNPs
 bcftools view -m2 -M2 -v snps -o pggb_cleaned_final_biallelic_snp.tests.vcf.gz -Oz pggb_cleaned_final.test.vcf.gz 
 
-#7. Make a vcf of biallelic indels 
+# 7. Make a vcf of biallelic indels 
 bcftools view -m2 -M2 -v indels -o pggb_cleaned_final_biallelic_indels.tests.vcf.gz -Oz pggb_cleaned_final.test.vcf.gz 
 ```
 
 ## 5. Compute variant table
 
 ```bash
-# 1
+# 1.
 bcftools view -s VEFL_149044 -Oz -o pggb_cleaned_outgrouponly.vcf.gz pggb_cleaned_final.vcf.gz
 
 
-# 2
+# 2.
 bcftools query -f '%CHROM\t%POS\t%REF\t%ALT[\t%GT]\n' pggb_cleaned_outgrouponly.vcf.gz > aa.tab
 
-# 3 
-
+# 3.
 python3 calc_anc_allele.py
 
-# 4 
+# 4.
 bgzip aa.processed.tab 
 
-#5 
+# 5.
 tabix -s1 -b2 -e2 aa.processed.tab.gz
 
-#6 
+# 6.
 echo '##INFO=<ID=AA,Number=1,Type=Character,Description="Ancestral allele">' > hdr.txt
 
-#7 
+# 7.
 bcftools annotate -x INFO/CONFLICT,INFO/LV,INFO/PS,INFO/AT,INFO/TYPE,INFO/LEN,INFO/ORIGIN,INFO/NS pggb_cleaned_final.vcf.gz | bcftools annotate -a aa.processed.tab.gz -c CHROM,POS,REF,ALT,.INFO/AA -h hdr.txt -Oz -o pggb_recode_aa.vcf.gz
 
-#8
+# 8.
 bcftools view -Ou -a -s ^VEFL_149044 pggb_recode_aa.vcf.gz | bcftools annotate -Ou -x INFO/AF,INFO/F_MISSING | bcftools view -c 1 -Ou -Oz -o pggb_ingroup_only.vcf.gz
 
-#9
+# 9.
 bcftools query -f "%CHROM\t%POS0\t%END\t%TYPE\t%REF\t%ALT\t%INFO/AA\t%INV[\t%GT]\n" pggb_ingroup_only.vcf.gz > pggb_variation.tab
 
-# call variants
+# 10. call variants
 python3 compute_var_table_no_regions_no_repeats.py
 ```
 
