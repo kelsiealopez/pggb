@@ -198,6 +198,16 @@ vcfbub_out_dir="/n/holyscratch01/edwards_lab/Users/kelsielopez/pggb/vcfbub"
 gzip ${vcfbub_input_dir}/${sample}.snarls.vcf
 
 ~/vcfbub -l 0 -a 100000 -i ${vcfbub_input_dir}/${sample}.snarls.vcf.gz > ${vcfbub_out_dir}/${sample}.vcfbub.snarls.vcf
+
+# Run vcfwave
+module load python/3.10.9-fasrc01
+source activate python_env1
+
+vcfwave_input_dir="/n/holyscratch01/edwards_lab/Users/kelsielopez/pggb/vcfbub"
+vcfwave_out_dir="/n/holyscratch01/edwards_lab/Users/kelsielopez/pggb/vcfwave"
+
+vcfwave -I 1000 -t 1 ${vcfwave_input_dir}/${sample}.vcfbub.snarls.vcf > ${vcfwave_out_dir}/${sample}.vcfwave.vcfbub.snarls.vcf
+
 ```
 
 ## 4. Merge vcfs, clean, fix vcfs, etc. 
