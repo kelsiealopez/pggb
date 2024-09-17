@@ -176,7 +176,7 @@ https://github.com/pangenome/vcfbub
 chmod u+x vcfbub
 ```
 
-Run `vg deconstruct` then `vcfbub` for each chromosome 
+Run `vg deconstruct` , `vcfbub` , and `vcfwave` for each chromosome 
 
 ```bash
 # change according to which samples are done so far... I just started this process while the rest of the pangenome graphs were building because that can take a long time, especially for larger chromosomes.
