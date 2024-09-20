@@ -246,16 +246,16 @@ bcftools +fill-tags pggb_merged.fixploidy.vcf -Ob -o pggb_merged_cleanup.bcf -- 
 # 4.
 PATH_REFERENCE_FA="/n/holyscratch01/edwards_lab/Users/kelsielopez/hap_assemblies/prefixed/HemMar_prefixed_scaffolds_corrected.fa"
 
-bcftools norm -m+both -f ${PATH_REFERENCE_FA} pggb_merged_cleanup.test.bcf > pggb_merged_normalized.test.vcf
+bcftools norm -m+both -f ${PATH_REFERENCE_FA} pggb_merged_cleanup.bcf > pggb_merged_normalized.vcf
 
 # 5. Add tags for allele number, allele count, allele proportion (?) and missing proportion 
-bcftools sort pggb_merged_normalized.test.vcf | bcftools +fill-tags -- -t AN,AC,AF,F_MISSING | bcftools view -o pggb_cleaned_final.test.vcf.gz -Oz
+bcftools sort pggb_merged_normalized.vcf | bcftools +fill-tags -- -t AN,AC,AF,F_MISSING | bcftools view -o pggb_cleaned_final.vcf.gz -Oz
 
 # 6. Make a vcf of biallelic SNPs
-bcftools view -m2 -M2 -v snps -o pggb_cleaned_final_biallelic_snp.tests.vcf.gz -Oz pggb_cleaned_final.test.vcf.gz 
+bcftools view -m2 -M2 -v snps -o pggb_cleaned_final_biallelic_snp.vcf.gz -Oz pggb_cleaned_final.vcf.gz 
 
 # 7. Make a vcf of biallelic indels 
-bcftools view -m2 -M2 -v indels -o pggb_cleaned_final_biallelic_indels.tests.vcf.gz -Oz pggb_cleaned_final.test.vcf.gz 
+bcftools view -m2 -M2 -v indels -o pggb_cleaned_final_biallelic_indels.vcf.gz -Oz pggb_cleaned_final.vcf.gz 
 ```
 
 ## 5. Compute variant table
@@ -263,7 +263,7 @@ bcftools view -m2 -M2 -v indels -o pggb_cleaned_final_biallelic_indels.tests.vcf
 Without repeat information and genomic overlaps:
 
 ```bash
-# 1.
+# 1. # VEFL_149044 is my outgroup
 bcftools view -s VEFL_149044 -Oz -o pggb_cleaned_outgrouponly.vcf.gz pggb_cleaned_final.vcf.gz
 
 # 2.
